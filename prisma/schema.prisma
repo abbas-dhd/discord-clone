@@ -1,0 +1,164 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Profile{
+  id String @id @default(uuid())
+  userId String @unique
+  name String
+  imageUrl String @db.Text
+  email String @db.Text
+
+  createdAt DateTime @default(now())
+  updattedAt DateTime @updatedAt
+
+  servers Server[]
+  members Member[]
+  channels Channel[]
+}
+
+model Server{
+  id String @id @default(uuid())
+  name String
+  imageUrl String @db.Text
+  inviteCode String @unique
+
+  profileId String
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updattedAt DateTime @updatedAt
+  
+  members Member[]
+  channels Channel[]
+
+  @@index([profileId])  
+}
+
+
+enum MemberRole{
+  ADMIN
+  MODERATOR
+  GUEST
+}
+
+model Member{
+  id String @id @default(uuid())
+  role MemberRole @default(GUEST)
+
+  profileId String
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  serverId String
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  messages Message[]
+  directMessages DirectMessage[]
+  conversationsInitiated Conversation[] @relation("MemberOne")
+  
+  conversationsRecieved  Conversation[] @relation("MemberTwo")
+
+
+  createdAt DateTime @default(now())
+  updattedAt DateTime @updatedAt
+  
+  @@index([profileId])
+  @@index([serverId])
+
+}
+
+
+enum ChannelType{
+  TEXT
+  AUDIO
+  VIDEO
+}
+
+model Channel{
+  id String @id @default(uuid())
+  name String
+  type ChannelType @default(TEXT)
+
+  profileId String
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  serverId String
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  messages Message[]
+
+  createdAt DateTime @default(now())
+  updattedAt DateTime @updatedAt
+
+  @@index([profileId])
+  @@index([serverId])
+  
+}
+// Message: A message is a message sent in a channel
+model Message{
+  id String @id @default(uuid())
+  content String @db.Text
+
+  fileURL String? @db.Text
+  memberId String
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  
+  channelId String 
+  channel Channel @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  deleted Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updaredAt DateTime @updatedAt
+  
+  @@index([memberId])
+  @@index([channelId])
+}
+
+// Conversation: A conversation is a collection of direct messages between two members
+model Conversation{
+  id String @id @default(uuid())
+  
+  memberOneId String
+  memberOne Member @relation( "MemberOne", fields: [memberOneId],references: [id], onDelete: Cascade )
+
+  memberTwoId String
+  memberTwo Member @relation( "MemberTwo", fields: [memberTwoId],references: [id], onDelete: Cascade )
+
+  directMessages DirectMessage[]
+
+  @@index([memberOneId])
+  @@index([memberTwoId])
+
+  @@unique([memberOneId, memberTwoId])
+}
+
+// DirectMessage: A direct message is a message between two members
+model DirectMessage{
+  id String @id @default(uuid())
+  content String @db.Text
+  fileURL String? @db.Text
+
+  memberId String
+  member Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  conversationId String
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  deleted Boolean @default(false)
+  
+  createdAt DateTime @default(now())
+  updattedAt DateTime @updatedAt
+
+  @@index([memberId])
+  @@index([conversationId])
+
+}
