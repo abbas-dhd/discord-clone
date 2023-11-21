@@ -18,7 +18,7 @@ model Profile{
   email String @db.Text
 
   createdAt DateTime @default(now())
-  updattedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 
   servers Server[]
   members Member[]
@@ -35,7 +35,7 @@ model Server{
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
-  updattedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
   
   members Member[]
   channels Channel[]
@@ -68,7 +68,7 @@ model Member{
 
 
   createdAt DateTime @default(now())
-  updattedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
   
   @@index([profileId])
   @@index([serverId])
@@ -96,7 +96,7 @@ model Channel{
   messages Message[]
 
   createdAt DateTime @default(now())
-  updattedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 
   @@index([profileId])
   @@index([serverId])
@@ -117,7 +117,7 @@ model Message{
   deleted Boolean @default(false)
   
   createdAt DateTime @default(now())
-  updaredAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
   
   @@index([memberId])
   @@index([channelId])
@@ -156,7 +156,7 @@ model DirectMessage{
   deleted Boolean @default(false)
   
   createdAt DateTime @default(now())
-  updattedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt
 
   @@index([memberId])
   @@index([conversationId])
