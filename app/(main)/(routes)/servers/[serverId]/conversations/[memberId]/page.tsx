@@ -25,6 +25,8 @@ const MemberId = async ({ params, searchParams }: MemberIdProps) => {
     redirectToSignIn();
   }
 
+  const isVideoEnabled = searchParams.video === 'true';
+
   const currentMember = await db.member.findFirst({
     where: {
       serverId: params.serverId,
@@ -61,10 +63,10 @@ const MemberId = async ({ params, searchParams }: MemberIdProps) => {
         type="conversation"
       />
 
-      {searchParams.video === 'true' && (
+      {isVideoEnabled && (
         <MediaRoom chatId={conversation.id} audio={true} video={true} />
       )}
-      {searchParams.video === 'false' && (
+      {!isVideoEnabled && (
         <>
           <ChatMessages
             member={currentMember}
