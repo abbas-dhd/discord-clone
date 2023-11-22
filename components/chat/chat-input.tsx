@@ -74,6 +74,7 @@ const ChatInput = ({ apiUrl, name, query, type }: ChatInputProps) => {
                   </button>
                   <Input
                     {...field}
+                    autoComplete="off"
                     placeholder={`Message ${
                       type === 'conversation' ? name : '#' + name
                     }`}

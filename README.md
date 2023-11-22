@@ -1,6 +1,6 @@
 # Discord Clone
 
-### Built with Next.js, Tailwind CSS, and PostgresSQL and Socket.io.
+### Built with Next.js, Tailwind CSS, and PostgreSQL and Socket.io.
 
 Click [here](https://discord-clone-q7f5.onrender.com/) to see the live demo.
 
